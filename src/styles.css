@@ -1,0 +1,456 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+   Wild Butterflies — Styles
+   Theme: soft white + romantic red/pink
+   Background: white → blush → rose gradient
+   Text: dark gray #1f1f1f
+   Glassmorphism cards on inputs
+   ───────────────────────────────────────────────────────────────────────────── */
+
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Lato:wght@100;300;400&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --text:        #1f1f1f;
+  --text-mid:    rgba(31, 31, 31, 0.65);
+  --text-dim:    rgba(31, 31, 31, 0.40);
+  --text-faint:  rgba(31, 31, 31, 0.22);
+
+  --red:         #e8334a;
+  --red-light:   #ff758f;
+  --red-faint:   rgba(232, 51, 74, 0.10);
+  --red-glow:    rgba(232, 51, 74, 0.22);
+
+  --bg-start:    #fef6fb;
+  --bg-mid:      #fde8f0;
+  --bg-end:      #f9c4da;
+
+  --glass-bg:    rgba(255, 255, 255, 0.55);
+  --glass-border: rgba(255, 255, 255, 0.80);
+}
+
+html, body {
+  width: 100%; height: 100%;
+  overflow: hidden;
+  background: #fff9e6;
+  transition: background 2s ease;
+  color: var(--text);
+  font-family: 'Lato', sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Canvas ─────────────────────────────────────────────────────────────────── */
+#canvas {
+  position: fixed; inset: 0;
+  width: 100%; height: 100%;
+  z-index: 0; display: block;
+  background: transparent;
+}
+
+/* ── App overlay ────────────────────────────────────────────────────────────── */
+#app {
+  position: fixed; inset: 0;
+  z-index: 10;
+  pointer-events: none;
+}
+
+/* ── Vignette ─────────────────────────────────────────────────────────────── */
+.vignette {
+  position: fixed; inset: 0;
+  z-index: 5; pointer-events: none;
+  background: radial-gradient(
+    ellipse at 50% 50%,
+    transparent 38%,
+    rgba(255, 160, 175, 0.18) 100%
+  );
+}
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   SCREENS
+   ══════════════════════════════════════════════════════════════════════════════ */
+.screen {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  opacity: 0; pointer-events: none;
+  transition: opacity 1.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.screen.visible { opacity: 1; pointer-events: all; }
+.screen.hidden  { opacity: 0; pointer-events: none; }
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   SCREEN 1 — INTRO
+   ══════════════════════════════════════════════════════════════════════════════ */
+#screen-intro {
+  gap: 0;
+  padding: 0 24px;
+}
+
+/* ── Site title ─────────────────────────────────────────────────────────────── */
+.site-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 300;
+  font-size: clamp(2rem, 5vw, 3.2rem);
+  color: var(--text);
+  letter-spacing: 0.03em;
+  text-align: center;
+  line-height: 1.25;
+  margin-bottom: 48px;
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 1.4s cubic-bezier(0.4, 0, 0.2, 1),
+              transform 1.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.site-title.show { opacity: 1; transform: translateY(0); }
+.site-title em {
+  font-style: italic;
+  color: var(--red);
+}
+
+/* ── Heart separator in names display ──────────────────────────────────────── */
+.heart-sep {
+  display: inline-block;
+  margin: 0 14px;
+  color: var(--red);
+  font-size: 1.1em;
+  vertical-align: middle;
+  animation: heartBeat 2.2s ease-in-out infinite;
+  filter: drop-shadow(0 0 6px rgba(232,51,74,0.45));
+}
+@keyframes heartBeat {
+  0%,100% { transform: scale(1);    }
+  14%      { transform: scale(1.22); }
+  28%      { transform: scale(1);    }
+  42%      { transform: scale(1.12); }
+  56%      { transform: scale(1);    }
+}
+
+/* ── Prompt labels ──────────────────────────────────────────────────────────── */
+.prompt-line {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 400;
+  font-size: clamp(1.1rem, 2.5vw, 1.5rem);
+  letter-spacing: 0.08em;
+  color: var(--text);
+  text-align: center;
+  margin-bottom: 12px;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 1.0s cubic-bezier(0.4, 0, 0.2, 1),
+              transform 1.0s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.prompt-line.show { opacity: 1; transform: translateY(0); }
+
+/* ── Input wrappers (glassmorphism) ──────────────────────────────────────────── */
+.input-wrapper {
+  position: relative;
+  width: min(320px, 80vw);
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 4px 24px rgba(232, 51, 74, 0.08),
+              0 1px 0 rgba(255,255,255,0.9) inset;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 1.1s cubic-bezier(0.4, 0, 0.2, 1),
+              transform 1.1s cubic-bezier(0.4, 0, 0.2, 1),
+              box-shadow 0.4s ease;
+  margin-bottom: 6px;
+}
+.input-wrapper.show { opacity: 1; transform: translateY(0); }
+.input-wrapper:focus-within {
+  box-shadow: 0 4px 28px rgba(232, 51, 74, 0.18),
+              0 0 0 1.5px var(--red),
+              0 1px 0 rgba(255,255,255,0.9) inset;
+}
+
+.input-wrapper input {
+  width: 100%;
+  background: transparent;
+  border: none;
+  border-radius: 12px;
+  padding: 16px 20px;
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 400;
+  font-size: 1.25rem;
+  color: var(--text);
+  letter-spacing: 0.08em;
+  text-align: center;
+  outline: none;
+  caret-color: var(--red);
+  pointer-events: all;
+  /* Explicitly prevent any interference with typing */
+  -webkit-user-select: text;
+  user-select: text;
+}
+.input-wrapper input::placeholder {
+  color: var(--text-faint);
+  font-style: italic;
+  font-size: 1rem;
+  letter-spacing: 0.12em;
+}
+
+/* Animated bottom accent line */
+.input-glow {
+  position: absolute; bottom: 0; left: 50%;
+  transform: translateX(-50%);
+  width: 0; height: 2px;
+  border-radius: 0 0 12px 12px;
+  background: linear-gradient(90deg, transparent, var(--red), var(--red-light), transparent);
+  transition: width 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+}
+.input-wrapper input:focus ~ .input-glow { width: 80%; }
+
+/* Divider between inputs */
+.divider {
+  width: 1px; height: 20px;
+  background: linear-gradient(to bottom, transparent, rgba(232,51,74,0.20), transparent);
+  margin: 8px auto 12px;
+  opacity: 0; transition: opacity 0.9s ease;
+}
+.divider.show { opacity: 1; }
+
+/* ── Generate Butterfly button (intro screen) ───────────────────────────────── */
+#heart-btn {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 400;
+  font-size: 0.85rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--red);
+  background: rgba(255,255,255,0.65);
+  border: 1.5px solid rgba(232, 51, 74, 0.25);
+  border-radius: 40px;
+  padding: 14px 32px;
+  cursor: pointer;
+  margin-top: 28px;
+  opacity: 0;
+  transform: translateY(8px);
+  pointer-events: none;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 4px 20px rgba(232,51,74,0.10);
+  transition: opacity 0.9s ease, transform 0.9s ease,
+              box-shadow 0.3s ease, background 0.3s ease, border-color 0.3s ease;
+}
+#heart-btn.show  { opacity: 1; transform: translateY(0); pointer-events: all; }
+#heart-btn.ready {
+  border-color: var(--red);
+  background: rgba(255,255,255,0.90);
+  box-shadow: 0 0 24px 6px var(--red-glow);
+}
+#heart-btn:hover {
+  background: rgba(255,255,255,1);
+  box-shadow: 0 6px 28px rgba(232,51,74,0.30);
+  transform: translateY(-2px);
+}
+
+/* ── Beating heart regen button ─────────────────────────────────────────────── */
+.beating-heart {
+  animation: beatHeart 1.0s ease-in-out infinite;
+  transform-origin: center;
+}
+@keyframes beatHeart {
+  0%,100% { transform: scale(1);    }
+  14%      { transform: scale(1.30); }
+  28%      { transform: scale(1);    }
+  42%      { transform: scale(1.15); }
+  70%      { transform: scale(1);    }
+}
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   SCREEN 2 — BUTTERFLY
+   ══════════════════════════════════════════════════════════════════════════════ */
+#screen-butterfly {
+  justify-content: flex-end;
+  padding-bottom: 60px;
+}
+
+.names-display {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 300;
+  font-size: clamp(0.80rem, 1.5vw, 1.0rem);
+  color: var(--text-mid);
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  margin-bottom: 28px;
+  opacity: 0;
+  transition: opacity 1.6s ease 0.6s;
+}
+#screen-butterfly.visible .names-display { opacity: 1; }
+.names-display em {
+  font-style: normal;
+  color: var(--red);
+}
+
+/* ── Buttons ─────────────────────────────────────────────────────────────────── */
+.btn-row { display: flex; gap: 14px; align-items: center; }
+
+.ghost-btn {
+  font-family: 'Lato', sans-serif;
+  font-weight: 300;
+  font-size: 0.60rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #fff;
+  background: linear-gradient(135deg, var(--red) 0%, var(--red-light) 100%);
+  border: none;
+  border-radius: 6px;
+  padding: 13px 26px 12px;
+  cursor: pointer;
+  pointer-events: all;
+  opacity: 0;
+  transform: translateY(10px);
+  box-shadow: 0 4px 18px rgba(232, 51, 74, 0.28);
+  transition: opacity 1s ease, transform 1s ease,
+              box-shadow 0.3s ease, letter-spacing 0.3s ease,
+              filter 0.3s ease;
+}
+#screen-butterfly.visible .ghost-btn          { opacity: 1; transform: translateY(0); }
+#screen-butterfly.visible #btn-regen          { transition-delay: 0.10s; }
+
+.ghost-btn:hover {
+  letter-spacing: 0.30em;
+  box-shadow: 0 6px 28px rgba(232, 51, 74, 0.45);
+  filter: brightness(1.08);
+  transform: translateY(-2px);
+}
+.ghost-btn:active {
+  transform: translateY(0);
+  filter: brightness(0.96);
+}
+
+/* Regen — heart icon only, circular */
+.ghost-btn.regen-heart {
+  width: 48px; height: 48px;
+  border-radius: 50%;
+  padding: 0;
+  display: flex; align-items: center; justify-content: center;
+  background: linear-gradient(135deg, var(--red) 0%, var(--red-light) 100%);
+  border: none;
+  box-shadow: 0 4px 18px rgba(232,51,74,0.30);
+  flex-shrink: 0;
+}
+.ghost-btn.regen-heart svg {
+  width: 22px; height: 22px;
+  stroke: #fff;
+  fill: none;
+  transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
+}
+.ghost-btn.regen-heart:hover svg {
+  transform: scale(1.22);
+  fill: rgba(255,255,255,0.25);
+}
+.ghost-btn.regen-heart:hover {
+  letter-spacing: normal;
+  box-shadow: 0 6px 28px rgba(232,51,74,0.50);
+}
+
+/* Go Back — secondary style */
+#btn-back {
+  background: var(--glass-bg);
+  color: var(--red);
+  border: 1.5px solid rgba(232, 51, 74, 0.30);
+  box-shadow: 0 2px 12px rgba(232, 51, 74, 0.10);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+#btn-back:hover {
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 4px 20px rgba(232, 51, 74, 0.22);
+  border-color: var(--red);
+}
+
+/* ── "with love, ritika" signature ─────────────────────────────────────────── */
+#signature {
+  position: fixed;
+  top: 18px; left: 22px;
+  z-index: 50;
+  pointer-events: all;
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 700;
+  font-size: 0.78rem;
+  letter-spacing: 0.14em;
+  color: rgba(160, 50, 80, 0.75);
+  line-height: 1;
+  white-space: nowrap;
+  text-decoration: none;
+  cursor: pointer;
+  transition: color 0.3s ease, letter-spacing 0.3s ease;
+}
+#signature:hover {
+  color: rgba(210, 40, 80, 1);
+  letter-spacing: 0.22em;
+}
+#signature em {
+  font-style: italic;
+  font-weight: 700;
+  color: rgba(210, 50, 85, 0.90);
+}
+
+/* ── Music toggle button ────────────────────────────────────────────────────── */
+#btn-music {
+  position: fixed;
+  top: 22px; right: 24px;
+  z-index: 50;
+  width: 42px; height: 42px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(232, 51, 74, 0.25);
+  background: rgba(255,255,255,0.60);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  color: var(--red);
+  font-size: 1.1rem;
+  cursor: pointer;
+  pointer-events: all;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 2px 12px rgba(232,51,74,0.12);
+  transition: background 0.3s, box-shadow 0.3s, transform 0.2s, border-color 0.3s;
+}
+#btn-music:hover {
+  background: rgba(255,255,255,0.92);
+  box-shadow: 0 4px 20px rgba(232,51,74,0.28);
+  transform: scale(1.08);
+}
+#btn-music.playing {
+  border-color: var(--red);
+  background: rgba(255,255,255,0.88);
+  box-shadow: 0 0 18px 6px rgba(232,51,74,0.20);
+  animation: musicPulse 2.4s ease-in-out infinite;
+}
+@keyframes musicPulse {
+  0%,100% { box-shadow: 0 0 12px 4px rgba(232,51,74,0.18); }
+  50%      { box-shadow: 0 0 24px 10px rgba(232,51,74,0.30); }
+}
+
+/* ── Save button ─────────────────────────────────────────────────────────────── */
+.ghost-btn.save {
+  background: rgba(255,255,255,0.75);
+  color: var(--red);
+  border: 1.5px solid rgba(232, 51, 74, 0.30);
+  box-shadow: 0 2px 10px rgba(232, 51, 74, 0.12);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+.ghost-btn.save:hover {
+  background: rgba(255,255,255,0.95);
+  box-shadow: 0 4px 18px rgba(232,51,74,0.28);
+  border-color: var(--red);
+}
+
+/* ── Loading spinner ─────────────────────────────────────────────────────────── */
+#loading-ring {
+  position: fixed; top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 30; opacity: 0; pointer-events: none;
+  transition: opacity 0.5s ease;
+}
+#loading-ring.show { opacity: 1; }
+#loading-ring svg  {
+  width: 44px; height: 44px;
+  animation: spinRing 2.0s linear infinite;
+}
+@keyframes spinRing { to { transform: rotate(360deg); } }
